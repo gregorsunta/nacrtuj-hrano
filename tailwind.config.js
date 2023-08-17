@@ -18,5 +18,8 @@ export default {
       green: '#2a9d8f',
       darkGreen: '#264653',
     },
+    fontFamily: {
+      caveat: 'Caveat',
+    },
   },
 };
