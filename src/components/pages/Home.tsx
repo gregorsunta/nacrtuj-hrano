@@ -1,18 +1,9 @@
 import { Header, Footer } from '../organisms';
-import { Button } from '../atoms/';
 import { ReactComponent as Cikel } from '../../assets/icons/cikel.svg';
-import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
 const Home = () => {
   const [show, setShow] = useState(false);
-  const unfadeClasses = classNames('opacity-100 translate-y-0');
-  const transitionClasses = classNames(
-    'inline-block',
-    'opacity-0',
-    'transition-all',
-    'duration-1000',
-  );
 
   useEffect(() => {
     setShow(true);
@@ -25,24 +16,23 @@ const Home = () => {
         <div className="font-normal flex flex-col gap-28">
           <p className="flex flex-col gap-3 text-9xl h-min font-bold">
             <span
-              className={`text-darkOrange ${transitionClasses} ${
-                show && unfadeClasses
+              className={`inline-block text-darkOrange transition-all duration-0 opacity-0 ${
+                show && 'translate-y-0 opacity-100'
               }`}
             >
               poišči
             </span>
-            <br />
             <span
-              className={`text-green delay-500 transform translate-y-40 ${transitionClasses} ${
-                show && unfadeClasses
-              }`}
+              className={`inline-block text-green transition-all duration-500  delay-500 transform  ${
+                show ? 'translate-y-0 opacity-100' : 'translate-y-40 opacity-0'
+              } `}
             >
               primerjaj
             </span>
-            <br />
             <span
-              className={`text-darkGreen delay-1000 transform translate-y-40 ${transitionClasses} ${
-                show && unfadeClasses
+              className={`inline-block text-darkGreen transition-all duration-1000 delay-1000 transform ${
+                show ? 'translate-y-0 opacity-100' : 'translate-y-40 opacity-0'
+              }
               }`}
             >
               izberi
