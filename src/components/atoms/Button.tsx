@@ -1,20 +1,42 @@
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 
-interface IButton {
-  children: string;
+export interface IButton {
+  children: string | string[];
   variant: 'solid' | 'outlined' | 'text';
+  to?: string;
   twclasses?: string;
+  onClick?: () => void;
 }
 
-const Button = ({ children, variant, twclasses }: IButton) => {
-  const defaultClasses = classNames('font-bold text-lg');
-  const solidVariantClasses = classNames('py-2', 'px-6', 'rounded-full');
+export const Button = ({
+  children,
+  variant,
+  twclasses,
+  to = '',
+  onClick,
+}: IButton) => {
+  const defaultClasses = classNames('py-1 font-bold text-lg');
+  const solidVariantClasses = classNames('px-8 rounded-full');
+  const outlinedVariantClasses = classNames('px-8');
   const classes = classNames(
     defaultClasses,
     variant === 'solid' && solidVariantClasses,
+    variant === 'outlined' && outlinedVariantClasses,
     twclasses,
   );
-  return <button className={classes}>{children}</button>;
-};
 
-export { Button };
+  let Component;
+
+  if (to) {
+    Component = Link;
+  } else {
+    Component = 'button';
+  }
+
+  return (
+    <Component to={to} className={classes} onClick={onClick}>
+      {children}
+    </Component>
+  );
+};

@@ -69,3 +69,12 @@
 
   box-sizing: border-box;
 }
+
+@layer base {
+  h1 {
+    @apply text-9xl h-min font-bold;
+  }
+  h2 {
+    @apply text-3xl font-medium text-darkGreen mb-5 mt-2;
+  }
+}
