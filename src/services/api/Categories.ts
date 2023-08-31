@@ -22,5 +22,5 @@ const GET_CATEGORIES = gql`
 export const fetchCategories = async (): Promise<{
   categories: IOriginalCategory[];
 }> => {
-  return await request(import.meta.env.VITE_SERVER_URI, GET_CATEGORIES);
+  return await request('import.meta.env.VITE_SERVER_URI', GET_CATEGORIES);
 };
