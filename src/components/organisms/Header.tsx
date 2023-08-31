@@ -25,12 +25,7 @@ const Header = ({ twclasses }: IHeader) => {
         <Button variant="text" twclasses="hidden md:block text-darkGreen">
           Kako deluje
         </Button>
-        <Button variant="text" twclasses="hidden md:block text-darkGreen">
-          Vpis
-        </Button>
-        <Button variant="text" twclasses="hidden sm:block text-darkGreen">
-          Registracija
-        </Button>
+
         <Button
           to="/search"
           variant="solid"

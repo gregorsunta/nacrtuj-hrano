@@ -17,6 +17,7 @@ const Home = () => {
 
   return (
     <DefaultLayout
+      twclasses="bg-lightYellow"
       HeaderContent={(addClassNames) => (
         <Header twclasses={`${addClassNames} ${container}`} />
       )}

@@ -11,7 +11,9 @@ const GET_PRODUCTS = gql`
       novo_ime
       id_slika
       prices {
+        enota
         redna_cena_na_kilogram_liter
+        trgovina
       }
     }
   }

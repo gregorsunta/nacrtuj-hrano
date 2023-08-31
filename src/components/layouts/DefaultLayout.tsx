@@ -4,12 +4,14 @@ interface Props {
   HeaderContent: (addClassNames: string) => JSX.Element; // function type for passing additional classnames
   MainContent: (addClassNames: string) => JSX.Element;
   FooterContent: (addClassNames: string) => JSX.Element;
+  twclasses?: string;
 }
 
 const DefaultLayout = ({
   HeaderContent,
   MainContent,
   FooterContent,
+  twclasses,
 }: Props) => {
   const container = classNames(
     'px-5 sm:px-16 md:px-20 lg:px-40 xl:px-60 xxl:w-[1500px]',
@@ -20,7 +22,7 @@ const DefaultLayout = ({
   // const Footer = cloneElement(FooterContent, { classNames: container });
 
   return (
-    <div className="bg-lightYellow flex flex-col min-h-screen">
+    <div className={`${twclasses} flex flex-col min-h-screen`}>
       {HeaderContent(container)}
       {MainContent(container)}
       {FooterContent(container)}

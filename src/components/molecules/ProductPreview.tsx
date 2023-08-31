@@ -34,15 +34,23 @@ export const ProductPreview = ({ imgSrc, name, prices }: IProductPreview) => {
   }, [imgSrc]);
 
   return (
-    <div className="flex flex-row bg-white">
-      <div className="flex flex-col justify-end">
-        <img src={imgSrcChecked} />
-        <p>{name}</p>
+    <div className="drop-shadow rounded-md flex flex-col items-center bg-white">
+      <div className="h-40 w-40">
+        <img className="object-cover" src={imgSrcChecked} />
       </div>
-      <div className="flex flex-col">
-        {prices?.map((price) => (
-          <p key={uuidv4()}>{price.redna_cena_na_kilogram_liter}</p>
-        ))}
+      <div className="flex flex-col gap-3">
+        <p className="font-semibold text-lg text-darkGreen">{name}</p>
+        <div className="flex flex-col">
+          {prices?.map((price) => (
+            <p key={uuidv4()}>
+              <span className="text-darkOrange font-bold">
+                {price.redna_cena_na_kilogram_liter}
+              </span>
+              <span>{price.enota}</span>
+              <span className="text-darkGreen"> {price.trgovina}</span>
+            </p>
+          ))}
+        </div>
       </div>
     </div>
   );
