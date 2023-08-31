@@ -31,7 +31,7 @@ export const fetchProducts = async (
   variables: Variables,
 ): Promise<{ productsByCategories: IProduct[] }> => {
   return await request(
-    'import.meta.env.VITE_SERVER_URI',
+    import.meta.env.VITE_SERVER_URI,
     GET_PRODUCTS,
     variables,
   );
