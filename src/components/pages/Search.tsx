@@ -1,9 +1,9 @@
 import { DefaultLayout } from '../layouts';
 import { Header, Footer } from '../organisms';
-import { DropdownFilter, Dropdown, ProductPreview } from '../molecules';
+import { Dropdown, ProductPreview } from '../molecules';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Input } from '../atoms';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStores } from '../../contexts/StoreContext';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -57,9 +57,10 @@ export const Search = observer(() => {
       MainContent={(addClassNames) => (
         <main className={`flex flex-row gap-10  items-start ${addClassNames}`}>
           <nav className="flex flex-col bg-white max-h-min p-3 drop-shadow gap-10">
-            {categories?.map(({ name, subcategories, expanded }) => (
+            {categories.map(({ name, subcategories, expanded }) => (
               <Dropdown
-                // orientation="column"
+                orientation="column"
+                variant="solid"
                 itemOrientation="column"
                 key={uuidv4()}
                 expanded={expanded}
@@ -67,32 +68,36 @@ export const Search = observer(() => {
               >
                 <Button
                   variant="text"
-                  onClick={() => toggleCategoryExpandedProperty(name)}
+                  onClick={() => {
+                    toggleCategoryExpandedProperty(name);
+                  }}
                 >
                   {name}
                 </Button>
-
-                {subcategories.map(({ name, checked }) => (
-                  <div key={uuidv4()} className="flex flex-row gap-3">
-                    <Input
-                      id={name}
-                      key={uuidv4()}
-                      onChange={() => {
-                        handleCheckedValue(name);
-                        toggleSubcategoryCheckedProperty(name);
-                      }}
-                      type="checkbox"
-                      checked={checked}
-                    />
-                    <label htmlFor={name}>{name}</label>
-                  </div>
-                ))}
+                <>
+                  {subcategories.map(({ name, checked }) => (
+                    <div key={uuidv4()} className="flex flex-row gap-3">
+                      <Input
+                        id={name}
+                        key={uuidv4()}
+                        onChange={() => {
+                          handleCheckedValue(name);
+                          toggleSubcategoryCheckedProperty(name);
+                        }}
+                        type="checkbox"
+                        checked={checked}
+                      />
+                      <label htmlFor={name}>{name}</label>
+                    </div>
+                  ))}
+                </>
               </Dropdown>
             ))}
           </nav>
           <section className={'grid grid-cols-5 gap-3 '}>
-            {products?.map(({ novo_ime, prices, id_slika }) => (
+            {products.map(({ novo_ime, prices, id_slika }) => (
               <ProductPreview
+                key={uuidv4()}
                 name={novo_ime}
                 prices={prices}
                 imgSrc={`https://www.primerjaj-cene.si/WebImages/primerjalnik_images/a8_primerjalnik_velike-${id_slika}.jpg`}

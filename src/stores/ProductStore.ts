@@ -1,13 +1,35 @@
 import { makeAutoObservable } from 'mobx';
 import { fetchProducts } from '../services/api/Products';
 
-class ProductStore {
+export interface IProduct {
+  novo_ime: string;
+  prices: Price[];
+  id_slika: string;
+}
+
+export interface Price {
+  enota: string;
+  redna_cena_na_kilogram_liter: string;
+  trgovina: string;
+}
+
+export interface IProductStore {
+  products: IProduct[];
+  setProducts: (products: IProduct[]) => void;
+  getProducts: (variables: {
+    categories: string[];
+    page: number;
+    pageSize: number;
+  }) => void;
+}
+
+class ProductStore implements IProductStore {
   constructor() {
     makeAutoObservable(this);
   }
-  products: [object] | [] = [];
+  products: IProduct[] | [] = [];
 
-  setProducts = (products: [object]) => {
+  setProducts = (products: IProduct[]) => {
     this.products = products;
   };
 

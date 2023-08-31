@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 
 interface IINput {
-  id?: string | number;
+  id?: string | undefined;
   type: 'checkbox' | 'text';
   twclasses?: string;
-  onChange?: () => void;
+  onChange?: (value: string) => void;
   placeholder?: string;
   readOnly?: boolean;
   checked?: boolean;
@@ -28,7 +28,9 @@ export const Input = ({
       placeholder={placeholder}
       readOnly={readOnly}
       onChange={(e) => {
-        onChange(e.target.value);
+        if (onChange) {
+          onChange(e.target.value);
+        }
       }}
       checked={checked}
     />

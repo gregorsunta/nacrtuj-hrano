@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import classNames from 'classnames';
 import { Dropdown } from '.';
 import { IButton } from '../atoms/Button';
@@ -6,7 +5,7 @@ import { cloneElement } from 'react';
 
 interface IShowcase {
   children: [JSX.Element, JSX.Element[]];
-  expanded?: boolean;
+  expanded: boolean;
   //   sets: (string | [string])[][];
 }
 
@@ -24,7 +23,12 @@ export const DropdownFilter = ({ children, expanded }: IShowcase) => {
   const MainButton = cloneElement(mainButton, MainButtonProps);
 
   return (
-    <Dropdown orientation="column" itemOrientation="column" expanded={expanded}>
+    <Dropdown
+      variant="solid"
+      orientation="column"
+      itemOrientation="column"
+      expanded={expanded}
+    >
       {MainButton}
       <>{...listButtons}</>
     </Dropdown>

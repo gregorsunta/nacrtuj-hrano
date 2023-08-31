@@ -1,7 +1,5 @@
-import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Buttongroup } from './Buttongroup';
-import { IButton } from '../atoms/Button';
 
 export interface IDropdown {
   orientation: 'row' | 'column';
@@ -13,10 +11,9 @@ export interface IDropdown {
 }
 export const Dropdown = ({
   twclasses,
-  children,
-  orientation,
-  itemOrientation,
   variant,
+  children,
+  itemOrientation,
   expanded = false,
 }: IDropdown) => {
   const [mainButton, ...listItems] = children; //the first button is always the list opener

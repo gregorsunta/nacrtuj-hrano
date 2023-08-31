@@ -1,5 +1,14 @@
 import { gql } from 'graphql-request';
-import { fetchData } from './Utils';
+import request from 'graphql-request';
+
+// interface IFetchCategories {
+//   data: ICategory[];
+// }
+
+interface IOriginalCategory {
+  name: string;
+  subcategoryids: string[];
+}
 
 const GET_CATEGORIES = gql`
   {
@@ -10,6 +19,8 @@ const GET_CATEGORIES = gql`
   }
 `;
 
-export const fetchCategories = async () => {
-  return await fetchData(GET_CATEGORIES);
+export const fetchCategories = async (): Promise<{
+  categories: IOriginalCategory[];
+}> => {
+  return await request(import.meta.env.VITE_SERVER_URI, GET_CATEGORIES);
 };

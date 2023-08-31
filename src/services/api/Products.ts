@@ -1,5 +1,13 @@
-import { gql } from 'graphql-request';
-import { fetchData } from './Utils';
+import { Variables, gql } from 'graphql-request';
+// import { fetchData } from './Utils';
+import { IProduct } from '../../stores/ProductStore';
+import request from 'graphql-request';
+
+// interface IVariables {
+//   categories: string[];
+//   page: number;
+//   pageSize: number;
+// }
 
 const GET_PRODUCTS = gql`
   query Query($categories: [String]!, $page: Int!, $pageSize: Int!) {
@@ -19,6 +27,12 @@ const GET_PRODUCTS = gql`
   }
 `;
 
-export const fetchProducts = async (variables) => {
-  return await fetchData(GET_PRODUCTS, variables);
+export const fetchProducts = async (
+  variables: Variables,
+): Promise<{ productsByCategories: IProduct[] }> => {
+  return await request(
+    import.meta.env.VITE_SERVER_URI,
+    GET_PRODUCTS,
+    variables,
+  );
 };
