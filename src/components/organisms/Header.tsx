@@ -23,7 +23,7 @@ const Header = ({ twclasses }: IHeader) => {
       </Link>
       <div className="flex items-end gap-6">
         <Button variant="text" twclasses="hidden md:block text-darkGreen">
-          Kako deluje
+          <p>Kako deluje</p>
         </Button>
 
         <Button
@@ -31,7 +31,7 @@ const Header = ({ twclasses }: IHeader) => {
           variant="solid"
           twclasses="text-white bg-darkGreen inline"
         >
-          Iskalnik
+          <p>Iskalnik</p>
         </Button>
       </div>
     </header>

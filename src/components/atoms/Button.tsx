@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
 export interface IButton {
-  children: string | string[];
+  children: undefined | JSX.Element[] | JSX.Element;
   variant: 'solid' | 'outlined' | 'text';
   to?: string;
   twclasses?: string;

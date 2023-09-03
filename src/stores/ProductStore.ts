@@ -11,6 +11,7 @@ export interface Price {
   enota: string;
   redna_cena_na_kilogram_liter: string;
   trgovina: string;
+  date: string;
 }
 
 export interface IProductStore {
@@ -20,6 +21,7 @@ export interface IProductStore {
     categories: string[];
     page: number;
     pageSize: number;
+    shops: string[];
   }) => void;
 }
 
@@ -37,9 +39,14 @@ class ProductStore implements IProductStore {
     categories: string[];
     page: number;
     pageSize: number;
+    shops: string[];
   }) => {
-    const { productsByCategories } = await fetchProducts(variables);
-    this.setProducts(productsByCategories);
+    if (!variables.categories[0]) {
+      console.info('Categories empty, aborting getProducts');
+      return;
+    }
+    const { products } = await fetchProducts(variables);
+    this.setProducts(products);
   };
 }
 

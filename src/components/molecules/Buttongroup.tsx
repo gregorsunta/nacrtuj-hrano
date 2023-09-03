@@ -3,7 +3,7 @@ import classNames from 'classnames';
 export interface IButtongroup {
   orientation: 'row' | 'column';
   variant: 'solid' | 'outlined';
-  children: JSX.Element[];
+  children?: JSX.Element[];
   twclasses: string;
 }
 
@@ -28,9 +28,7 @@ export const Buttongroup = ({
 
   return (
     <ul className={containerClasses}>
-      {children.map((item) => (
-        <li key={item.key}>{item}</li>
-      ))}
+      {children?.map((item) => <li key={item.key}>{item}</li>)}
     </ul>
   );
 };

@@ -1,26 +1,39 @@
-import { gql } from 'graphql-request';
+import { Variables, gql } from 'graphql-request';
 import request from 'graphql-request';
-
-// interface IFetchCategories {
-//   data: ICategory[];
-// }
-
-interface IOriginalCategory {
-  name: string;
-  subcategoryids: string[];
-}
+import { ICategory } from '../../stores/CategoryStore';
 
 const GET_CATEGORIES = gql`
   {
     categories {
+      id
       name
-      subcategoryids
+      subcategories
+    }
+  }
+`;
+
+const GET_CATEGORY = gql`
+  query Query($id: Int!) {
+    category(id: $id) {
+      id
+      name
+      subcategories
     }
   }
 `;
 
 export const fetchCategories = async (): Promise<{
-  categories: IOriginalCategory[];
+  categories: ICategory[];
 }> => {
   return await request(import.meta.env.VITE_SERVER_URI, GET_CATEGORIES);
+};
+
+export const fetchCategory = async (
+  variables: Variables,
+): Promise<{ category: ICategory }> => {
+  return await request(
+    import.meta.env.VITE_SERVER_URI,
+    GET_CATEGORY,
+    variables,
+  );
 };

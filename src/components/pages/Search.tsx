@@ -1,53 +1,63 @@
 import { DefaultLayout } from '../layouts';
 import { Header, Footer } from '../organisms';
-import { Dropdown, ProductPreview } from '../molecules';
+import { ProductPreview, DropdownFilter } from '../molecules';
 import { v4 as uuidv4 } from 'uuid';
-import { Button, Input } from '../atoms';
+import { Button, CheckboxLabel } from '../atoms';
 import { useEffect, useState } from 'react';
 import { useStores } from '../../contexts/StoreContext';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
+import { useParams } from 'react-router';
+import { ICategory } from '../../stores/CategoryStore';
+import { fetchShops } from '../../services/api/Products';
 
 export const Search = observer(() => {
-  const [checkedValues, setCheckedValues] = useState<string[]>([]);
-
-  const { productStore, categoryStore } = useStores();
-
+  const { categoryId } = useParams();
+  // const [pageNumber, setPageNumber] = useState<number>(1);
+  const [categoryState, setCategoryState] = useState<ICategory>();
+  const [shopState, setShopState] = useState<string[]>([]);
+  const { productStore, categoryStore, filterStore } = useStores();
   const { getProducts, products } = toJS(productStore);
-
   const {
-    getCategories,
-    toggleCategoryExpandedProperty,
-    toggleSubcategoryCheckedProperty,
-    categories,
-  } = toJS(categoryStore);
+    shopFilter,
+    subcategoryFilter,
+    toggleShopFilter,
+    toggleSubcategoryFilter,
+  } = toJS(filterStore);
 
-  const handleCheckedValue = (name: string) => {
-    if (checkedValues.includes(name)) {
-      const leftover = checkedValues.filter((item) => item !== name);
-      setCheckedValues(leftover);
-    } else {
-      const withExtra = [...checkedValues, name];
-      setCheckedValues(withExtra);
-    }
+  const { fetchAndSetCategory, categoryExists, getCategory } =
+    toJS(categoryStore);
+
+  const getProductsWithFilters = () => {
+    getProducts({
+      categories: subcategoryFilter,
+      page: 1,
+      pageSize: 25,
+      shops: shopFilter,
+    });
   };
 
   useEffect(() => {
-    getCategories();
-    getProducts({
-      categories: checkedValues,
-      page: 1,
-      pageSize: 2,
-    });
-  }, []);
+    const setCategory = async (): Promise<void> => {
+      const categoryNumber = Number(categoryId);
+      if (!categoryNumber) {
+        return;
+      }
+      if (!categoryExists(categoryNumber)) {
+        await fetchAndSetCategory(categoryNumber);
+      }
+      const category = getCategory(categoryNumber);
+      setCategoryState(category);
+    };
 
-  useEffect(() => {
-    getProducts({
-      categories: checkedValues,
-      page: 1,
-      pageSize: 25,
-    });
-  }, [checkedValues]);
+    const setShops = async (): Promise<void> => {
+      const { shops } = await fetchShops();
+      setShopState(shops);
+    };
+
+    void setCategory();
+    void setShops();
+  }, []);
 
   return (
     <DefaultLayout
@@ -55,54 +65,75 @@ export const Search = observer(() => {
         <Header twclasses={`${addClassNames}`} />
       )}
       MainContent={(addClassNames) => (
-        <main className={`flex flex-row gap-10  items-start ${addClassNames}`}>
-          <nav className="flex flex-col bg-white max-h-min p-3 drop-shadow gap-10">
-            {categories.map(({ name, subcategories, expanded }) => (
-              <Dropdown
-                orientation="column"
-                variant="solid"
-                itemOrientation="column"
-                key={uuidv4()}
-                expanded={expanded}
-                twclasses="items-start"
-              >
-                <Button
-                  variant="text"
-                  onClick={() => {
-                    toggleCategoryExpandedProperty(name);
-                  }}
-                >
-                  {name}
-                </Button>
-                <>
-                  {subcategories.map(({ name, checked }) => (
-                    <div key={uuidv4()} className="flex flex-row gap-3">
-                      <Input
-                        id={name}
-                        key={uuidv4()}
-                        onChange={() => {
-                          handleCheckedValue(name);
-                          toggleSubcategoryCheckedProperty(name);
-                        }}
-                        type="checkbox"
-                        checked={checked}
-                      />
-                      <label htmlFor={name}>{name}</label>
-                    </div>
-                  ))}
-                </>
-              </Dropdown>
-            ))}
+        <main
+          className={`flex flex-col xl:flex-row gap-10  items-start ${addClassNames}`}
+        >
+          <nav className="flex flex-col bg-white max-h-min p-3 drop-shadow gap-10 w-full xl:w-64">
+            <DropdownFilter
+              orientation="column"
+              itemOrientation="column"
+              variant="solid"
+              name="Kategorije"
+            >
+              {categoryState?.subcategories.map((name) => (
+                <div key={uuidv4()}>
+                  <CheckboxLabel
+                    name={name}
+                    id={name}
+                    key={uuidv4()}
+                    onChange={() => {
+                      toggleSubcategoryFilter(name);
+                    }}
+                    type="checkbox"
+                    checked={subcategoryFilter.includes(name)}
+                  />
+                </div>
+              ))}
+            </DropdownFilter>
+            <DropdownFilter
+              orientation="column"
+              itemOrientation="column"
+              variant="solid"
+              name="Trgovine"
+            >
+              {shopState.map((name) => (
+                <div key={uuidv4()}>
+                  <CheckboxLabel
+                    name={name}
+                    id={name}
+                    key={uuidv4()}
+                    onChange={() => {
+                      toggleShopFilter(name);
+                    }}
+                    type="checkbox"
+                    checked={shopFilter.includes(name)}
+                  />
+                </div>
+              ))}
+            </DropdownFilter>
+            <Button
+              onClick={getProductsWithFilters}
+              variant="solid"
+              twclasses="bg-darkGreen text-white whitespace-nowrap"
+            >
+              <p>Potrdi filtre</p>
+            </Button>
           </nav>
-          <section className={'grid grid-cols-5 gap-3 '}>
-            {products.map(({ novo_ime, prices, id_slika }) => (
-              <ProductPreview
-                key={uuidv4()}
-                name={novo_ime}
-                prices={prices}
-                imgSrc={`https://www.primerjaj-cene.si/WebImages/primerjalnik_images/a8_primerjalnik_velike-${id_slika}.jpg`}
-              />
-            ))}
+          <section>
+            <div
+              className={
+                'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 '
+              }
+            >
+              {products.map(({ novo_ime, prices, id_slika }) => (
+                <ProductPreview
+                  key={uuidv4()}
+                  name={novo_ime}
+                  prices={prices}
+                  imgSrc={`https://www.primerjaj-cene.si/WebImages/primerjalnik_images/a8_primerjalnik_velike-${id_slika}.jpg`}
+                />
+              ))}
+            </div>
           </section>
         </main>
       )}

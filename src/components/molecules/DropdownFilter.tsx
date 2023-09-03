@@ -1,36 +1,61 @@
 import classNames from 'classnames';
-import { Dropdown } from '.';
-import { IButton } from '../atoms/Button';
-import { cloneElement } from 'react';
+import { Buttongroup } from './Buttongroup';
+import { useState } from 'react';
+import { Button } from '../atoms';
+import { ReactComponent as DropArrow } from '../../assets/icons/down-arrow.svg';
 
-interface IShowcase {
-  children: [JSX.Element, JSX.Element[]];
-  expanded: boolean;
-  //   sets: (string | [string])[][];
+export interface IDropdownFilter {
+  orientation: 'row' | 'column';
+  itemOrientation: 'row' | 'column';
+  variant: 'solid' | 'outlined';
+  children?: JSX.Element[];
+  twclasses?: string;
+  name: string;
 }
+export const DropdownFilter = ({
+  twclasses,
+  variant,
+  children,
+  itemOrientation,
+  name,
+}: IDropdownFilter) => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const containerClasses = classNames(
+    // 'relative',
+    itemOrientation === 'row' && 'flex-row',
+    itemOrientation === 'column' && 'flex-col',
+    twclasses,
+  );
+  const listClasses = classNames();
 
-export const DropdownFilter = ({ children, expanded }: IShowcase) => {
-  const [mainButton, listButtons] = children;
-  // const [activeType, setActiveType] = useState('');
-  const activeButtonClasses = classNames('bg-darkOrange');
-
-  const MainButtonProps = {
-    ...(mainButton.props as IButton),
-    // onClick: toggleType,
-    twclasses: activeButtonClasses,
+  const toggleOpen = () => {
+    setIsOpen(!isOpen);
   };
 
-  const MainButton = cloneElement(mainButton, MainButtonProps);
-
   return (
-    <Dropdown
-      variant="solid"
-      orientation="column"
-      itemOrientation="column"
-      expanded={expanded}
-    >
-      {MainButton}
-      <>{...listButtons}</>
-    </Dropdown>
+    <div className={`flex ${containerClasses}`}>
+      <Button
+        variant="text"
+        twclasses="flex items-center justify-between"
+        onClick={toggleOpen}
+      >
+        <p>{name}</p>
+        <DropArrow
+          width={'20px'}
+          className={` transition-all duration-500 transform ${
+            isOpen && 'rotate-180'
+          }`}
+        />
+      </Button>
+      <Buttongroup
+        variant={variant}
+        orientation={itemOrientation}
+        twclasses={`transition-[max-height] duration-500 overflow-hidden ${
+          isOpen ? 'max-h-[500px]' : 'max-h-[0px]'
+        } ${listClasses}`}
+      >
+        {children}
+      </Buttongroup>
+    </div>
   );
 };

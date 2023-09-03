@@ -7,7 +7,7 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: 'search',
+    path: 'search/:categoryId',
     element: <Search />,
   },
   {

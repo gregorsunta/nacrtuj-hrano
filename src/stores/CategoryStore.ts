@@ -1,22 +1,20 @@
-import { makeAutoObservable } from 'mobx';
-import { fetchCategories } from '../services/api/Categories';
+import { makeAutoObservable, toJS } from 'mobx';
+import { fetchCategories, fetchCategory } from '../services/api/Categories';
 
 export interface ICategoryStore {
-  getCategories: () => void;
-  toggleCategoryExpandedProperty: (name: string) => void;
-  toggleSubcategoryCheckedProperty: (name: string) => void;
+  fetchAndSetCategories: () => Promise<void>;
+  // toggleCategoryExpandedProperty: (name: string) => void;
+  // toggleSubcategoryCheckedProperty: (name: string) => void;
+  categoryExists: (id: number) => boolean;
   categories: ICategory[];
+  getCategory: (id: number) => ICategory | undefined;
+  fetchAndSetCategory: (id: number) => Promise<void>;
 }
 
 export interface ICategory {
+  id: number;
   name: string;
-  subcategories: ISubCategory[];
-  expanded: boolean;
-}
-
-export interface ISubCategory {
-  name: string;
-  checked: boolean;
+  subcategories: string[];
 }
 
 class CategoryStore implements ICategoryStore {
@@ -25,47 +23,63 @@ class CategoryStore implements ICategoryStore {
   }
   categories: ICategory[] = [];
 
+  addCategory = (category: ICategory) => {
+    this.categories.push(category);
+  };
+
   setCategories = (categories: ICategory[]) => {
     this.categories = categories;
   };
 
-  getCategories = async () => {
+  fetchAndSetCategories = async (): Promise<void> => {
     const { categories } = await fetchCategories();
-    this.setCategories(
-      categories.map((category) => ({
-        name: category.name,
-        expanded: false,
-        subcategories: category.subcategoryids.map((id: string) => ({
-          name: id,
-          checked: false,
-        })),
-      })),
-    );
+    categories.forEach((category) => {
+      this.addCategory(category);
+    });
   };
 
-  findCategoryIndexByName = (searchName: string) => {
+  fetchAndSetCategory = async (id: number): Promise<void> => {
+    const { category } = await fetchCategory({ id: id });
+    this.addCategory(category);
+  };
+
+  getCategory = (id: number): ICategory | undefined => {
+    return toJS(this.categories.find((category) => category.id === id));
+  };
+
+  categoryExists = (id: number): boolean => {
+    return this.categories.some((category) => category.id === id);
+  };
+
+  findCategoryIndexByName = (searchName: string): number => {
     return this.categories.findIndex(({ name }) => searchName === name);
   };
 
-  toggleCategoryExpandedProperty = (categoryname: string) => {
-    const index = this.findCategoryIndexByName(categoryname);
-    const isExpanded = this.categories[index]?.expanded;
-    this.categories[index].expanded = !isExpanded;
-  };
+  // getSubCategories = (parentCategoryName: string): string[] | undefined => {
+  //   return this.categories.find(
+  //     (category) => category.name === parentCategoryName,
+  //   );
+  // };
 
-  toggleSubcategoryCheckedProperty = (subcategoryName: string) => {
-    const modifiedCategories = this.categories.map((category) => {
-      return {
-        ...category,
-        subcategories: category.subcategories.map((subcategory) =>
-          subcategoryName === subcategory.name
-            ? { ...subcategory, checked: !subcategory.checked }
-            : subcategory,
-        ),
-      };
-    });
-    this.setCategories(modifiedCategories);
-  };
+  // toggleCategoryExpandedProperty = (categoryname: string) => {
+  //   const index = this.findCategoryIndexByName(categoryname);
+  //   const isExpanded = this.categories[index];
+  //   this.categories[index].expanded = !isExpanded;
+  // };
+
+  // toggleSubcategoryCheckedProperty = (subcategoryName: string) => {
+  //   const modifiedCategories = this.categories.map((category) => {
+  //     return {
+  //       ...category,
+  //       subcategories: category.subcategories.map((subcategory) =>
+  //         subcategoryName === subcategory.name
+  //           ? { ...subcategory, checked: !subcategory.checked }
+  //           : subcategory,
+  //       ),
+  //     };
+  //   });
+  //   this.setCategories(modifiedCategories);
+  // };
 }
 
 const categoryStore = new CategoryStore();
