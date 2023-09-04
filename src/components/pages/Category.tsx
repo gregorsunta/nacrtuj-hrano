@@ -9,16 +9,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const Category = observer(() => {
   const { categoryStore } = useStores();
-  const { categories, fetchAndSetCategories } = toJS(categoryStore);
+  const { categories, fetchAndSetCategories, clearCategories } =
+    toJS(categoryStore);
 
   useEffect(() => {
     const setCategories = async () => {
-      if (!categories[0]) {
-        await fetchAndSetCategories();
-      }
-      console.log(categories);
+      await fetchAndSetCategories();
     };
     void setCategories();
+    return () => {
+      clearCategories();
+    };
   }, []);
   return (
     <DefaultLayout

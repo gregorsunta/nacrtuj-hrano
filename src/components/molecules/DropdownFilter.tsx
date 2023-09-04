@@ -36,7 +36,7 @@ export const DropdownFilter = ({
     <div className={`flex ${containerClasses}`}>
       <Button
         variant="text"
-        twclasses="flex items-center justify-between"
+        twclasses={`flex items-center justify-between ${isOpen && ''}`}
         onClick={toggleOpen}
       >
         <p>{name}</p>
@@ -50,7 +50,7 @@ export const DropdownFilter = ({
       <Buttongroup
         variant={variant}
         orientation={itemOrientation}
-        twclasses={`transition-[max-height] duration-500 overflow-hidden ${
+        twclasses={`gap-3 transition-[max-height] duration-500 overflow-hidden ${
           isOpen ? 'max-h-[500px]' : 'max-h-[0px]'
         } ${listClasses}`}
       >

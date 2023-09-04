@@ -17,10 +17,11 @@ export const Search = observer(() => {
   const [categoryState, setCategoryState] = useState<ICategory>();
   const [shopState, setShopState] = useState<string[]>([]);
   const { productStore, categoryStore, filterStore } = useStores();
-  const { getProducts, products } = toJS(productStore);
+  const { getProducts, products, clearProducts } = toJS(productStore);
   const {
     shopFilter,
     subcategoryFilter,
+    clearSubcategoryFilter,
     toggleShopFilter,
     toggleSubcategoryFilter,
   } = toJS(filterStore);
@@ -29,6 +30,7 @@ export const Search = observer(() => {
     toJS(categoryStore);
 
   const getProductsWithFilters = () => {
+    clearProducts();
     getProducts({
       categories: subcategoryFilter,
       page: 1,
@@ -57,6 +59,11 @@ export const Search = observer(() => {
 
     void setCategory();
     void setShops();
+
+    return () => {
+      clearSubcategoryFilter();
+      clearProducts();
+    };
   }, []);
 
   return (
@@ -68,7 +75,7 @@ export const Search = observer(() => {
         <main
           className={`flex flex-col xl:flex-row gap-10  items-start ${addClassNames}`}
         >
-          <nav className="flex flex-col bg-white max-h-min p-3 drop-shadow gap-10 w-full xl:w-64">
+          <nav className="p-3 flex flex-col bg-white max-h-min drop-shadow gap-10 w-full xl:w-64">
             <DropdownFilter
               orientation="column"
               itemOrientation="column"

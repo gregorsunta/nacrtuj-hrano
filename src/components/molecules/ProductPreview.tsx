@@ -55,7 +55,7 @@ export const ProductPreview = ({ imgSrc, name, prices }: IProductPreview) => {
   }, [imgSrc]);
 
   return (
-    <div className="drop-shadow rounded-md flex flex-col items-center bg-white">
+    <div className="p-5 gap-3 drop-shadow rounded-md flex flex-col items-center bg-white">
       <div className="h-48 w-38">
         <img
           className="object-contain h-full"

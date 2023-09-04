@@ -2,6 +2,7 @@ import { makeAutoObservable, toJS } from 'mobx';
 import { fetchCategories, fetchCategory } from '../services/api/Categories';
 
 export interface ICategoryStore {
+  clearCategories: () => void;
   fetchAndSetCategories: () => Promise<void>;
   // toggleCategoryExpandedProperty: (name: string) => void;
   // toggleSubcategoryCheckedProperty: (name: string) => void;
@@ -22,6 +23,10 @@ class CategoryStore implements ICategoryStore {
     makeAutoObservable(this);
   }
   categories: ICategory[] = [];
+
+  clearCategories = () => {
+    this.categories = [];
+  };
 
   addCategory = (category: ICategory) => {
     this.categories.push(category);

@@ -23,6 +23,7 @@ export interface IProductStore {
     pageSize: number;
     shops: string[];
   }) => void;
+  clearProducts: () => void;
 }
 
 class ProductStore implements IProductStore {
@@ -30,6 +31,10 @@ class ProductStore implements IProductStore {
     makeAutoObservable(this);
   }
   products: IProduct[] | [] = [];
+
+  clearProducts = () => {
+    this.products = [];
+  };
 
   setProducts = (products: IProduct[]) => {
     this.products = products;

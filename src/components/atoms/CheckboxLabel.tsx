@@ -20,13 +20,16 @@ export const CheckboxLabel = ({
   readOnly,
   checked = false,
 }: IInput) => {
-  const containerClasses = classNames(twclasses, 'relative');
+  const containerClasses = classNames(
+    twclasses,
+    'relative flex items-center gap-2',
+  );
   const removeDefaultCheckMark = classNames('appearance-none');
   const customCheckMark = classNames(
-    'w-5 h-5 border-2 rounded-md border-gray-400 hover:bg-green',
-    checked && 'bg-darkGreen',
+    'w-3 h-3 border-2 rounded-xl hover:border-gray-900 active:border-gray-500',
+    checked && 'border-darkOrange bg-darkOrange',
   );
-  // const label = classNames('translate-x-16');
+  const label = classNames(checked && 'font-semibold');
   return (
     <div className={`${containerClasses} `}>
       {/* <span className={`${customCheckMark}`}></span> */}
@@ -43,7 +46,7 @@ export const CheckboxLabel = ({
         }}
         checked={checked}
       />
-      <label className={''} htmlFor={name}>
+      <label className={label} htmlFor={name}>
         {name}
       </label>
     </div>

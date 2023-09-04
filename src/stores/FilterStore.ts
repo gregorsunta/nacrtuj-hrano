@@ -3,6 +3,7 @@ import { makeAutoObservable } from 'mobx';
 export interface IFilterStore {
   shopFilter: string[];
   subcategoryFilter: string[];
+  clearSubcategoryFilter(): void;
   toggleShopFilter(filter: string): void;
   toggleSubcategoryFilter(filter: string): void;
 }
@@ -20,6 +21,10 @@ class FilterStore implements IFilterStore {
     'Mercator',
   ];
   subcategoryFilter: string[] = [];
+
+  clearSubcategoryFilter = () => {
+    this.subcategoryFilter = [];
+  };
 
   setShopFilter = (shopFilter: string[]) => {
     this.shopFilter = shopFilter;

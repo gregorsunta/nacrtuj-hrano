@@ -1,6 +1,6 @@
 import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Home, Search } from './components/pages';
+import { Error, Home, Search } from './components/pages';
 import { Category } from './components/pages/Category';
 const router = createBrowserRouter([
   {
@@ -23,6 +23,7 @@ const router = createBrowserRouter([
     path: 'products',
     element: <h2>This is the products page</h2>,
   },
+  { path: '*', element: <Error /> },
 ]);
 
 function App() {
