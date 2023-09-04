@@ -33,9 +33,7 @@ class CategoryStore implements ICategoryStore {
 
   fetchAndSetCategories = async (): Promise<void> => {
     const { categories } = await fetchCategories();
-    categories.forEach((category) => {
-      this.addCategory(category);
-    });
+    this.setCategories(categories);
   };
 
   fetchAndSetCategory = async (id: number): Promise<void> => {

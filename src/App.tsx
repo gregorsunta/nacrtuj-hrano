@@ -1,10 +1,15 @@
 import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Home, Search } from './components/pages';
+import { Category } from './components/pages/Category';
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
+  },
+  {
+    path: 'search',
+    element: <Category />,
   },
   {
     path: 'search/:categoryId',
