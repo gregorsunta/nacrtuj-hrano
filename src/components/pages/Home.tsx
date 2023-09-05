@@ -1,4 +1,3 @@
-import { Header, Footer } from '../organisms';
 import { ReactComponent as Cikel } from '../../assets/icons/cikel.svg';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';

@@ -1,5 +1,4 @@
 import { DefaultLayout } from '../layouts';
-import { Header, Footer } from '../organisms';
 import { ProductPreview, DropdownFilter } from '../molecules';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, CheckboxLabel } from '../atoms';
@@ -24,14 +23,8 @@ export const Search = observer(() => {
     toggleShopFilter,
     toggleSubcategoryFilter,
   } = toJS(filterStore);
-  const {
-    categories,
-    fetchAndSetCategory,
-    fetchAndSetCategories,
-    categoryExists,
-    getCategory,
-    clearCategories,
-  } = toJS(categoryStore);
+  const { categories, fetchAndSetCategories, getCategory, clearCategories } =
+    toJS(categoryStore);
 
   const dropdownFilterClasses = classNames('border p-3');
 
@@ -106,7 +99,7 @@ export const Search = observer(() => {
           ))}
         </header>
         <div className={`flex flex-col items-start lg:flex-row gap-10 w-full`}>
-          <nav className="p-3 flex flex-col align-center max-h-min gap-10 w-full lg:w-80">
+          <nav className="flex flex-col align-center max-h-min gap-10 w-full lg:w-80">
             <DropdownFilter
               orientation="column"
               itemOrientation="column"
