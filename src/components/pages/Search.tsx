@@ -105,9 +105,7 @@ export const Search = observer(() => {
             </Button>
           ))}
         </header>
-        <div
-          className={`flex flex-col justify-center items-start lg:flex-row gap-10 w-full`}
-        >
+        <div className={`flex flex-col items-start lg:flex-row gap-10 w-full`}>
           <nav className="p-3 flex flex-col align-center max-h-min gap-10 w-full lg:w-80">
             <DropdownFilter
               orientation="column"
