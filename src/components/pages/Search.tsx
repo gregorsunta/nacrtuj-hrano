@@ -8,13 +8,12 @@ import { useStores } from '../../contexts/StoreContext';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useParams } from 'react-router';
-import { ICategory } from '../../stores/CategoryStore';
 import { fetchShops } from '../../services/api/Products';
+import classNames from 'classnames';
 
 export const Search = observer(() => {
   const { categoryId } = useParams();
   // const [pageNumber, setPageNumber] = useState<number>(1);
-  const [categoryState, setCategoryState] = useState<ICategory>();
   const [shopState, setShopState] = useState<string[]>([]);
   const { productStore, categoryStore, filterStore } = useStores();
   const { getProducts, products, clearProducts } = toJS(productStore);
@@ -25,9 +24,16 @@ export const Search = observer(() => {
     toggleShopFilter,
     toggleSubcategoryFilter,
   } = toJS(filterStore);
+  const {
+    categories,
+    fetchAndSetCategory,
+    fetchAndSetCategories,
+    categoryExists,
+    getCategory,
+    clearCategories,
+  } = toJS(categoryStore);
 
-  const { fetchAndSetCategory, categoryExists, getCategory } =
-    toJS(categoryStore);
+  const dropdownFilterClasses = classNames('border p-3');
 
   const getProductsWithFilters = () => {
     clearProducts();
@@ -39,50 +45,78 @@ export const Search = observer(() => {
     });
   };
 
-  useEffect(() => {
-    const setCategory = async (): Promise<void> => {
-      const categoryNumber = Number(categoryId);
-      if (!categoryNumber) {
-        return;
-      }
-      if (!categoryExists(categoryNumber)) {
-        await fetchAndSetCategory(categoryNumber);
-      }
-      const category = getCategory(categoryNumber);
-      setCategoryState(category);
-    };
+  const getActiveSubcategories = () => {
+    return getCategory(Number(categoryId))?.subcategories;
+  };
 
+  useEffect(() => {
+    const setMainCategories = async () => {
+      await fetchAndSetCategories();
+    };
+    // void setMainCategories();
+    void setMainCategories();
+    return () => {
+      clearCategories();
+    };
+  }, []);
+
+  useEffect(() => {
+    // const setSubcategories = async (): Promise<void> => {
+    //   const categoryNumber = Number(categoryId);
+    //   if (!categoryNumber) {
+    //     return;
+    //   }
+    //   if (!categoryExists(categoryNumber)) {
+    //     await fetchAndSetCategory(categoryNumber);
+    //   }
+    //   const category = getCategory(categoryNumber);
+    //   setCategoryState(category);
+    // };
     const setShops = async (): Promise<void> => {
       const { shops } = await fetchShops();
       setShopState(shops);
     };
 
-    void setCategory();
+    // void setSubcategories();
     void setShops();
 
     return () => {
       clearSubcategoryFilter();
       clearProducts();
     };
-  }, []);
+  }, [categoryId]);
 
   return (
-    <DefaultLayout
-      HeaderContent={(addClassNames) => (
-        <Header twclasses={`${addClassNames}`} />
-      )}
-      MainContent={(addClassNames) => (
-        <main
-          className={`flex flex-col xl:flex-row gap-10  items-start ${addClassNames}`}
+    <DefaultLayout>
+      <main className={`flex flex-col items-start gap-10`}>
+        <header className="flex flex-wrap gap-4">
+          {categories.map((category) => (
+            <Button
+              key={uuidv4()}
+              to={`/search/${category.id}`}
+              variant="solid"
+              twclasses={`${
+                Number(categoryId) === category.id
+                  ? 'bg-darkOrange text-white'
+                  : 'bg-gray-200 text-gray-800'
+              } whitespace-nowrap`}
+            >
+              <span>{category.name}</span>
+            </Button>
+          ))}
+        </header>
+        <div
+          className={`flex flex-col justify-center items-start lg:flex-row gap-10 w-full`}
         >
-          <nav className="p-3 flex flex-col bg-white max-h-min drop-shadow gap-10 w-full xl:w-64">
+          <nav className="p-3 flex flex-col align-center max-h-min gap-10 w-full lg:w-80">
             <DropdownFilter
               orientation="column"
               itemOrientation="column"
               variant="solid"
               name="Kategorije"
+              twclasses={dropdownFilterClasses}
             >
-              {categoryState?.subcategories.map((name) => (
+              {getActiveSubcategories()?.map((name) => (
                 <div key={uuidv4()}>
                   <CheckboxLabel
                     name={name}
@@ -102,6 +136,7 @@ export const Search = observer(() => {
               itemOrientation="column"
               variant="solid"
               name="Trgovine"
+              twclasses={dropdownFilterClasses}
             >
               {shopState.map((name) => (
                 <div key={uuidv4()}>
@@ -121,7 +156,7 @@ export const Search = observer(() => {
             <Button
               onClick={getProductsWithFilters}
               variant="solid"
-              twclasses="bg-darkGreen text-white whitespace-nowrap"
+              twclasses="bg-darkGreen text-white whitespace-nowrap max-w-min"
             >
               <p>Potrdi filtre</p>
             </Button>
@@ -129,12 +164,13 @@ export const Search = observer(() => {
           <section>
             <div
               className={
-                'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 '
+                'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
               }
             >
               {products.map(({ novo_ime, prices, id_slika }) => (
                 <ProductPreview
                   key={uuidv4()}
+                  twclasses={'border'}
                   name={novo_ime}
                   prices={prices}
                   imgSrc={`https://www.primerjaj-cene.si/WebImages/primerjalnik_images/a8_primerjalnik_velike-${id_slika}.jpg`}
@@ -142,11 +178,8 @@ export const Search = observer(() => {
               ))}
             </div>
           </section>
-        </main>
-      )}
-      FooterContent={(addClassNames) => (
-        <Footer twclasses={`${addClassNames}`} />
-      )}
-    ></DefaultLayout>
+        </div>
+      </main>
+    </DefaultLayout>
   );
 });

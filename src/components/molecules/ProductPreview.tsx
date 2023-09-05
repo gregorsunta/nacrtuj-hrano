@@ -7,6 +7,7 @@ interface IProductPreview {
   imgSrc?: string;
   name: string;
   prices?: IPrice[];
+  twclasses: string;
 }
 
 interface IPrice {
@@ -16,7 +17,12 @@ interface IPrice {
   date: string;
 }
 
-export const ProductPreview = ({ imgSrc, name, prices }: IProductPreview) => {
+export const ProductPreview = ({
+  imgSrc,
+  name,
+  prices,
+  twclasses,
+}: IProductPreview) => {
   const [imgSrcChecked, setImgSrcChecked] = useState<string | undefined>(
     undefined,
   );
@@ -55,7 +61,7 @@ export const ProductPreview = ({ imgSrc, name, prices }: IProductPreview) => {
   }, [imgSrc]);
 
   return (
-    <div className="p-5 gap-3 drop-shadow rounded-md flex flex-col items-center bg-white">
+    <div className={`p-5 gap-3 flex flex-col items-center ${twclasses}`}>
       <div className="h-48 w-38">
         <img
           className="object-contain h-full"

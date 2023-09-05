@@ -27,7 +27,7 @@ const Header = ({ twclasses }: IHeader) => {
         </Button>
 
         <Button
-          to="/search"
+          to="/search/1"
           variant="solid"
           twclasses="text-white bg-darkGreen inline"
         >

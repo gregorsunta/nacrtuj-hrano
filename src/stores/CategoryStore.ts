@@ -47,7 +47,8 @@ class CategoryStore implements ICategoryStore {
   };
 
   getCategory = (id: number): ICategory | undefined => {
-    return toJS(this.categories.find((category) => category.id === id));
+    const categories = toJS(this.categories);
+    return categories.find((category) => category.id === id);
   };
 
   categoryExists = (id: number): boolean => {
