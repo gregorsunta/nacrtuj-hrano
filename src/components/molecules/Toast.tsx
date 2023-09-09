@@ -31,10 +31,10 @@ const types = {
 };
 
 export const Toast = ({ id, type, message }: IToast) => {
-  const { icon, classes } = types[type];
-  const progressBarRef = useRef(null);
+  const { classes } = types[type];
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const { notificationStore } = useRootStore();
-  const timer = useRef();
+  const timer = useRef<NodeJS.Timeout>();
 
   const container = classNames(
     'py-3 px-5 flex flex-col justify-center items-center drop-shadow bg-white rounded-md ',

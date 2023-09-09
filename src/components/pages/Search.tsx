@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { useParams } from 'react-router';
 import classNames from 'classnames';
 import { Button, CheckboxLabel, LoadingScreen } from '../atoms';
-import { ProductPreview, DropdownFilter, Toast } from '../molecules';
+import { ProductPreview, DropdownFilter } from '../molecules';
 import { DefaultLayout } from '../layouts';
 import { useRootStore } from '../../contexts/StoreContext';
 import { fetchShops } from '../../services/api/Products';

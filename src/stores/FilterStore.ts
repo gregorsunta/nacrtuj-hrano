@@ -1,5 +1,4 @@
 import { makeAutoObservable } from 'mobx';
-import { rootStore } from '.';
 import { IRootStore } from './RootStore';
 
 export interface IFilterStore {

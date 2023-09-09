@@ -1,14 +1,6 @@
-import {
-  action,
-  autorun,
-  computed,
-  makeObservable,
-  observable,
-  toJS,
-} from 'mobx';
+import { action, autorun, makeObservable, observable, toJS } from 'mobx';
 import { fetchProducts } from '../services/api/Products';
-import { ISharedStateTree, sharedStateTree } from './SharedStateTree';
-import { IRootStore, rootStore } from './RootStore';
+import { IRootStore } from './RootStore';
 
 export interface IProduct {
   novo_ime: string;

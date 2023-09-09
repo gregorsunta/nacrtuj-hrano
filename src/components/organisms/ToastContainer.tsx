@@ -1,4 +1,3 @@
-import { v4 as uuid4 } from 'uuid';
 import { Toast } from '../molecules';
 import { IToast } from '../molecules/Toast';
 import classNames from 'classnames';
