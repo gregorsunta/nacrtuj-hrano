@@ -1,5 +1,6 @@
 import { makeAutoObservable, toJS } from 'mobx';
 import { fetchCategories, fetchCategory } from '../services/api/Categories';
+import { IRootStore } from './RootStore';
 
 export interface ICategoryStore {
   clearCategories: () => void;
@@ -18,10 +19,12 @@ export interface ICategory {
   subcategories: string[];
 }
 
-class CategoryStore implements ICategoryStore {
-  constructor() {
+export class CategoryStore implements ICategoryStore {
+  constructor(rootStore: IRootStore) {
+    this.rootStore = rootStore;
     makeAutoObservable(this);
   }
+  rootStore: IRootStore;
   categories: ICategory[] = [];
 
   clearCategories = () => {
@@ -86,6 +89,4 @@ class CategoryStore implements ICategoryStore {
   // };
 }
 
-const categoryStore = new CategoryStore();
-
-export { categoryStore };
+// const categoryStore = new CategoryStore();

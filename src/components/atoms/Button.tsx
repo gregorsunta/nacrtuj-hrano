@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export interface IButton {
   children: undefined | JSX.Element[] | JSX.Element;
-  variant: 'solid' | 'outlined' | 'text';
+  variant: 'solid' | 'outlined' | 'text' | 'icon';
   to?: string;
   twclasses?: string;
   onClick?: () => void;

@@ -51,7 +51,7 @@ export const DropdownFilter = ({
         variant={variant}
         orientation={itemOrientation}
         twclasses={`gap-3 transition-[max-height] duration-500 overflow-hidden ${
-          isOpen ? 'max-h-[500px]' : 'max-h-[0px]'
+          isOpen ? 'max-h-[550px]' : 'max-h-[0px]'
         } ${listClasses}`}
       >
         {children}

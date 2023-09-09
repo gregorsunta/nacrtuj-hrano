@@ -1,149 +1,150 @@
-import { DefaultLayout } from '../layouts';
-import { ProductPreview, DropdownFilter } from '../molecules';
-import { v4 as uuidv4 } from 'uuid';
-import { Button, CheckboxLabel } from '../atoms';
 import { useEffect, useState } from 'react';
-import { useStores } from '../../contexts/StoreContext';
-import { toJS } from 'mobx';
+import { v4 as uuidv4 } from 'uuid';
 import { observer } from 'mobx-react-lite';
 import { useParams } from 'react-router';
-import { fetchShops } from '../../services/api/Products';
 import classNames from 'classnames';
+import { Button, CheckboxLabel, LoadingScreen } from '../atoms';
+import { ProductPreview, DropdownFilter, Toast } from '../molecules';
+import { DefaultLayout } from '../layouts';
+import { useRootStore } from '../../contexts/StoreContext';
+import { fetchShops } from '../../services/api/Products';
 
 export const Search = observer(() => {
   const { categoryId } = useParams();
-  // const [pageNumber, setPageNumber] = useState<number>(1);
   const [shopState, setShopState] = useState<string[]>([]);
-  const { productStore, categoryStore, filterStore } = useStores();
-  const { getProducts, products, clearProducts } = toJS(productStore);
-  const {
-    shopFilter,
-    subcategoryFilter,
-    clearSubcategoryFilter,
-    toggleShopFilter,
-    toggleSubcategoryFilter,
-  } = toJS(filterStore);
-  const { categories, fetchAndSetCategories, getCategory, clearCategories } =
-    toJS(categoryStore);
+  const { productStore, categoryStore, filterStore, notificationStore } =
+    useRootStore();
 
   const dropdownFilterClasses = classNames('border p-3');
+  const productContainerClasses = classNames(
+    productStore.products[0] &&
+      `grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5`,
+  );
 
   const getProductsWithFilters = () => {
-    clearProducts();
-    getProducts({
-      categories: subcategoryFilter,
+    productStore.getProducts({
+      categories: filterStore.subcategoryFilter,
       page: 1,
       pageSize: 25,
-      shops: shopFilter,
+      shops: filterStore.shopFilter,
     });
   };
 
   const getActiveSubcategories = () => {
-    return getCategory(Number(categoryId))?.subcategories;
+    return categoryStore.getCategory(Number(categoryId))?.subcategories;
   };
 
   useEffect(() => {
     const setMainCategories = async () => {
-      await fetchAndSetCategories();
+      await categoryStore.fetchAndSetCategories();
     };
-    // void setMainCategories();
     void setMainCategories();
+    notificationStore.toastWarning(
+      'Ker je gostovanje te spletne strani brezplačno lahko pride do daljšega nalaganja - do 30 sekund',
+    );
     return () => {
-      clearCategories();
+      categoryStore.clearCategories();
     };
   }, []);
 
   useEffect(() => {
-    // const setSubcategories = async (): Promise<void> => {
-    //   const categoryNumber = Number(categoryId);
-    //   if (!categoryNumber) {
-    //     return;
-    //   }
-    //   if (!categoryExists(categoryNumber)) {
-    //     await fetchAndSetCategory(categoryNumber);
-    //   }
-    //   const category = getCategory(categoryNumber);
-    //   setCategoryState(category);
-    // };
     const setShops = async (): Promise<void> => {
       const { shops } = await fetchShops();
       setShopState(shops);
     };
 
-    // void setSubcategories();
     void setShops();
 
     return () => {
-      clearSubcategoryFilter();
-      clearProducts();
+      filterStore.clearSubcategoryFilter();
+      productStore.clearProducts();
     };
   }, [categoryId]);
 
   return (
     <DefaultLayout>
       <main className={`flex flex-col items-start gap-10`}>
-        <header className="flex flex-wrap gap-4">
-          {categories.map((category) => (
-            <Button
-              key={uuidv4()}
-              to={`/search/${category.id}`}
-              variant="solid"
-              twclasses={`${
-                Number(categoryId) === category.id
-                  ? 'bg-darkOrange text-white'
-                  : 'bg-gray-200 text-gray-800'
-              } whitespace-nowrap`}
-            >
-              <span>{category.name}</span>
-            </Button>
-          ))}
-        </header>
+        <nav className="flex flex-wrap gap-4">
+          {categoryStore.categories[0]
+            ? categoryStore.categories.map((category) => (
+                <Button
+                  key={uuidv4()}
+                  to={`/search/${category.id}`}
+                  variant="solid"
+                  twclasses={`${
+                    Number(categoryId) === category.id
+                      ? 'bg-darkOrange text-white'
+                      : 'bg-gray-200 text-gray-800'
+                  } whitespace-nowrap`}
+                >
+                  <span>{category.name}</span>
+                </Button>
+              ))
+            : new Array(6)
+                .fill(null)
+                .map((_) => (
+                  <LoadingScreen
+                    key={uuidv4()}
+                    twclasses="w-36 h-8"
+                  ></LoadingScreen>
+                ))}
+        </nav>
         <div className={`flex flex-col items-start lg:flex-row gap-10 w-full`}>
           <nav className="flex flex-col align-center max-h-min gap-10 w-full lg:w-80">
-            <DropdownFilter
-              orientation="column"
-              itemOrientation="column"
-              variant="solid"
-              name="Kategorije"
-              twclasses={dropdownFilterClasses}
-            >
-              {getActiveSubcategories()?.map((name) => (
-                <div key={uuidv4()}>
-                  <CheckboxLabel
-                    name={name}
-                    id={name}
-                    key={uuidv4()}
-                    onChange={() => {
-                      toggleSubcategoryFilter(name);
-                    }}
-                    type="checkbox"
-                    checked={subcategoryFilter.includes(name)}
-                  />
-                </div>
-              ))}
-            </DropdownFilter>
-            <DropdownFilter
-              orientation="column"
-              itemOrientation="column"
-              variant="solid"
-              name="Trgovine"
-              twclasses={dropdownFilterClasses}
-            >
-              {shopState.map((name) => (
-                <div key={uuidv4()}>
-                  <CheckboxLabel
-                    name={name}
-                    id={name}
-                    key={uuidv4()}
-                    onChange={() => {
-                      toggleShopFilter(name);
-                    }}
-                    type="checkbox"
-                    checked={shopFilter.includes(name)}
-                  />
-                </div>
-              ))}
-            </DropdownFilter>
+            {getActiveSubcategories() ? (
+              <DropdownFilter
+                orientation="column"
+                itemOrientation="column"
+                variant="solid"
+                name="Kategorije"
+                twclasses={dropdownFilterClasses}
+              >
+                {getActiveSubcategories()?.map((name) => (
+                  <div key={uuidv4()}>
+                    <CheckboxLabel
+                      name={name}
+                      id={name}
+                      key={uuidv4()}
+                      onChange={() => {
+                        filterStore.toggleSubcategoryFilter(name);
+                      }}
+                      type="checkbox"
+                      checked={filterStore.subcategoryFilter.includes(name)}
+                    />
+                  </div>
+                ))}
+              </DropdownFilter>
+            ) : (
+              <LoadingScreen twclasses="w-full h-[200px]" />
+            )}
+
+            {shopState[0] ? (
+              <DropdownFilter
+                orientation="column"
+                itemOrientation="column"
+                variant="solid"
+                name="Trgovine"
+                twclasses={dropdownFilterClasses}
+              >
+                {shopState.map((name) => (
+                  <div key={uuidv4()}>
+                    <CheckboxLabel
+                      name={name}
+                      id={name}
+                      key={uuidv4()}
+                      onChange={() => {
+                        filterStore.toggleShopFilter(name);
+                      }}
+                      type="checkbox"
+                      checked={filterStore.shopFilter.includes(name)}
+                    />
+                  </div>
+                ))}
+              </DropdownFilter>
+            ) : (
+              <LoadingScreen twclasses="w-full h-[200px]" />
+            )}
+
             <Button
               onClick={getProductsWithFilters}
               variant="solid"
@@ -153,12 +154,8 @@ export const Search = observer(() => {
             </Button>
           </nav>
           <section>
-            <div
-              className={
-                'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-              }
-            >
-              {products.map(({ novo_ime, prices, id_slika }) => (
+            <div className={productContainerClasses}>
+              {productStore.products.map(({ novo_ime, prices, id_slika }) => (
                 <ProductPreview
                   key={uuidv4()}
                   twclasses={'border'}

@@ -1,5 +1,14 @@
-import { makeAutoObservable } from 'mobx';
+import {
+  action,
+  autorun,
+  computed,
+  makeObservable,
+  observable,
+  toJS,
+} from 'mobx';
 import { fetchProducts } from '../services/api/Products';
+import { ISharedStateTree, sharedStateTree } from './SharedStateTree';
+import { IRootStore, rootStore } from './RootStore';
 
 export interface IProduct {
   novo_ime: string;
@@ -15,6 +24,7 @@ export interface Price {
 }
 
 export interface IProductStore {
+  rootStore: IRootStore;
   products: IProduct[];
   setProducts: (products: IProduct[]) => void;
   getProducts: (variables: {
@@ -27,10 +37,30 @@ export interface IProductStore {
 }
 
 class ProductStore implements IProductStore {
-  constructor() {
-    makeAutoObservable(this);
+  constructor(rootStore: IRootStore) {
+    this.rootStore = rootStore;
+
+    makeObservable(this, {
+      products: observable,
+      rootStore: observable,
+      clearProducts: action,
+      setProducts: action,
+      getProducts: action,
+    });
+
+    autorun(() => {
+      this.clearProducts();
+      void this.getProducts({
+        categories: toJS(rootStore.filterStore.subcategoryFilter),
+        page: 1,
+        pageSize: 25,
+        shops: toJS(rootStore.filterStore.shopFilter),
+      });
+    });
   }
+
   products: IProduct[] | [] = [];
+  rootStore: IRootStore;
 
   clearProducts = () => {
     this.products = [];
@@ -55,6 +85,6 @@ class ProductStore implements IProductStore {
   };
 }
 
-const productStore = new ProductStore();
+// const productStore = new ProductStore(rootStore);
 
-export { productStore };
+export { ProductStore };

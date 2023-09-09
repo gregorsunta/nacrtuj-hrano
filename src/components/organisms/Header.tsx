@@ -22,7 +22,11 @@ const Header = ({ twclasses }: IHeader) => {
         </div>
       </Link>
       <div className="flex items-end gap-6">
-        <Button variant="text" twclasses="hidden md:block text-darkGreen">
+        <Button
+          variant="text"
+          to="/howitworks"
+          twclasses="hidden md:block text-darkGreen"
+        >
           <p>Kako deluje</p>
         </Button>
 

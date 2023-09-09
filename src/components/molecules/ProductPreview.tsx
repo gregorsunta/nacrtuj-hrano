@@ -37,7 +37,7 @@ export const ProductPreview = ({
         }
       })
       .catch((err) => {
-        console.info(err);
+        console.log(err);
       });
   };
 

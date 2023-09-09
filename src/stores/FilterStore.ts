@@ -1,4 +1,6 @@
 import { makeAutoObservable } from 'mobx';
+import { rootStore } from '.';
+import { IRootStore } from './RootStore';
 
 export interface IFilterStore {
   shopFilter: string[];
@@ -9,9 +11,12 @@ export interface IFilterStore {
 }
 
 class FilterStore implements IFilterStore {
-  constructor() {
+  constructor(rootStore: IRootStore) {
     makeAutoObservable(this);
+    this.rootStore = rootStore;
   }
+  rootStore: IRootStore;
+
   shopFilter: string[] = [
     'Tuš',
     'Spar',
@@ -51,7 +56,11 @@ class FilterStore implements IFilterStore {
       this.subcategoryFilter.push(filter);
     }
   };
+
+  logConsole = () => {
+    console.log(this.subcategoryFilter);
+  };
 }
 
-const filterStore = new FilterStore();
-export { filterStore };
+// const filterStore = new FilterStore(rootStore);
+export { FilterStore };

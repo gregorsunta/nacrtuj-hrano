@@ -29,7 +29,10 @@ export const CheckboxLabel = ({
     'w-3 h-3 border-2 rounded-xl hover:border-gray-900 active:border-gray-500',
     checked && 'border-darkOrange bg-darkOrange',
   );
-  const label = classNames(checked && 'font-semibold');
+  const label = classNames(
+    'hover:font-semibold active:text-gray-500',
+    checked && 'font-semibold',
+  );
   return (
     <div className={`${containerClasses} `}>
       {/* <span className={`${customCheckMark}`}></span> */}
